@@ -1,5 +1,14 @@
 # bfaes
-Brute force AES
+Bruteforce AES
+
+|Parameters|Value|
+|----------|-----|
+|-p|Path to file|
+|-o|Path to out file|
+|-passwd|Set password for file|
+|-bs|Buffer size, default: 64 * 1024|
+|-pfile|File with passwords for bruteforce|
+|-a|Action: 'd' (decrypt) or 'e' (encrypt)|
 
 ## Encrypt file:
 
