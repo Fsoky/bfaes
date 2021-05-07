@@ -47,9 +47,11 @@ def action(*args):
 							values["path"] = f"{values['path']}.aes"
 							
 						pyAesCrypt.decryptFile(values["path"], values["out"], password, values["bs"])
-						print(f"{Fore.GREEN}\n[*] PASSWORD: {password}\n")
+						print(f"{Fore.WHITE}[+] PASSWORD: {Fore.GREEN}{password}{Fore.RESET}")
+						
+						break
 					except ValueError:
-						print(f"{Fore.RED}[*] NOT CORRECT PASSWORD: {password}")
+						print(f"{Fore.WHITE}[-] PASSWORD: {Fore.RED}{password}{Fore.RESET}")
 	if values["action"].lower() == "e" or "encrypt":
 		if values["passwd"] is None:
 			pass
