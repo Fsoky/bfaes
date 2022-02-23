@@ -1,2 +1,2 @@
-colorama==0.4.1
-pyAesCrypt==5.0.0
+pyAesCrypt==6.0.0
+rich==11.2.0
