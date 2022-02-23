@@ -1,67 +1,46 @@
 import argparse
 import pyAesCrypt
-from colorama import init, Fore, Style
 
-init() # Initialization module 'colorama'
+import rich
 
-parser = argparse.ArgumentParser(description="Aes encrypt & decrypt")
-
-parser.add_argument("-p", help="Path to file")
-parser.add_argument("-o", help="Path to out file")
-parser.add_argument("-a", help="Action: 'e' (encrypt) or 'd' (decrypt)")
-parser.add_argument("-pfile", help="File with passwords for bruteforce")
-parser.add_argument("-passwd", help="set password for file")
-parser.add_argument("-bs", default=64 * 1024, help="Buffer size. Default: 64 * 1024")
+parser = argparse.ArgumentParser(description="Aes encrypt/decrypt")
+parser.add_argument("-f", "--file", help="Path to file")
+parser.add_argument("-o", "--output", help="Path to out file")
+parser.add_argument("-a", "--action", help="Action:\n\te - encrypt\n\td - decrypt")
+parser.add_argument("-pl", "--passwords-list", help="File with passwords for bruteforce")
+parser.add_argument("-passwd", "--password", help="Set password for file")
+parser.add_argument("-bs", "--buffer-size", default=64 * 1024, help="Buffer size. Default: 64 * 1024 (65536)")
 
 args = parser.parse_args()
 
+try:
+	if args.action.lower() == "d":
+		with open(args.passwords_list, "r") as file:
+			passwords = file.read().split()
+			attempt = 0
 
-"""For example:
+			for password in passwords:
+				try:
+					if not args.file.endswith(".aes"):
+						args.file = f"{args.file}.aes"
 
-ENCRYPT: bfaes.py -p C:/Users/user/Desktop/test.txt -o C:/Users/user/Desktop/testout.txt -passwd testpasswordforfile -a e
-DECRYPT: bfaes.py -p C:/Users/user/Desktop/test.txt.aes -o C:/Users/user/Desktop/aestestout.txt -pfile C:/Users/user/Desktop/brutefile.txt -a d
+					pyAesCrypt.decryptFile(args.file, args.output, password, args.buffer_size)
+					rich.print(f"Password found: [green]{password}[/green]")
 
-"""
+					break
+				except ValueError:
+					continue
+	if args.action.lower() == "e":
+		if not args.output.endswith(".aes"):
+			args.output = f"{args.output}.aes"
 
+		pyAesCrypt.encryptFile(args.file, args.output, args.password, args.buffer_size)
+except AttributeError:
+	banner = """Examples:
+	[red]Encrypt[/red]
+	bfaes.py -f [yellow]target.txt[/yellow] -a [purple]e[/purple] -passwd [green]12345[/green] -o [yellow]outfile.aes[/yellow]
 
-def action(*args):
-	values = {
-		"action": args[0].a,
-		"path": args[0].p,
-		"out": args[0].o,
-		"passwd": args[0].passwd,
-		"bs": args[0].bs,
-		"dbfile": args[0].pfile 
-	}
-
-	if values["action"].lower() == "d" or "decrypt":
-		if values["dbfile"] is None:
-			pass
-		else:
-			with open(values["dbfile"], "r") as file:
-				for password in file.read().split():
-					try:
-						if values['path'].endswith(".aes"):
-							values['path'] = values['path']
-						else:
-							values["path"] = f"{values['path']}.aes"
-							
-						pyAesCrypt.decryptFile(values["path"], values["out"], password, values["bs"])
-						print(f"{Fore.WHITE}[+] PASSWORD: {Fore.GREEN}{password}{Fore.RESET}")
-						
-						break
-					except ValueError:
-						print(f"{Fore.WHITE}[-] PASSWORD: {Fore.RED}{password}{Fore.RESET}")
-	if values["action"].lower() == "e" or "encrypt":
-		if values["passwd"] is None:
-			pass
-		else:
-			if values["out"].endswith(".aes"):
-				values["out"] = values["out"]
-			else:
-				values["out"] = f"{values['out']}.aes"
-
-			pyAesCrypt.encryptFile(values["path"], values["out"], values["passwd"], values["bs"])
-
-
-action(args)
+	[red]Decrypt[/red]
+	bfaes.py -f [yellow]target.aes[/yellow] -a [purple]d[/purple] -pl [green]passwords.txt[/green] -o [yellow]outfile.txt[/yellow]
+	"""
+	rich.print(banner)
