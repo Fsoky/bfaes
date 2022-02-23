@@ -1,6 +1,10 @@
-# bfaes
-Bruteforce AES
+# Bruteforce AES
 
+### Install ✔
+git clone https://github.com/Fsoky/bfaes.git \
+pip install -r requirements.txt
+
+### Arguments ⚙
 |Parameters|Value|
 |----------|-----|
 |-p|Path to file|
@@ -10,10 +14,11 @@ Bruteforce AES
 |-pl|File with passwords for bruteforce|
 |-a|Action: 'd' (decrypt) or 'e' (encrypt)|
 
-## Encrypt file:
+### Examples 👀
+Encrypt file:
 
     bfaes.py -p target.txt -o outfile.aes -passwd 12345 -a e
 
-## Decrypt file:
+Decrypt file:
 
     bfaes.py -p target.aes -o outdecryptedfile.txt -pl passwords.txt -a d
